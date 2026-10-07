@@ -3,3 +3,5 @@
 .today-date{font-size:17px;font-weight:700;margin:-6px 0 8px;text-transform:none}
 
 .options-button{position:fixed;top:calc(10px + env(safe-area-inset-top));left:50%;transform:translateX(220px);z-index:30;border:0;background:transparent;color:#263238;font-size:24px;font-weight:800;line-height:1;padding:8px;letter-spacing:1px;cursor:pointer}@media(max-width:520px){.options-button{left:auto;right:12px;transform:none}}
+
+.month-grid .month-day{border:0;background:transparent;font:inherit;color:inherit;padding:8px 2px;border-radius:9px;cursor:pointer}.month-grid .month-day.has{background:#dff6ee;font-weight:700}.month-grid .month-day.todaydot{background:#079b7b!important;color:#fff}
