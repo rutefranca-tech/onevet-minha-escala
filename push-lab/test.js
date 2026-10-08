@@ -22,3 +22,24 @@ document.querySelector("#diagnose-sw").onclick=async()=>{try{const reg=await nav
 async function simulateShift(date){try{output.textContent="A consultar o turno no Supabase...";const {data:{session}}=await client.auth.getSession();if(!session)throw Error("Faz login primeiro.");const response=await fetch("https://uoafurfydkhcycwobeil.supabase.co/functions/v1/push-shift-preview",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+session.access_token,"apikey":"sb_publishable_YtaQWacLc1MVuYCGmK341Q_M2Gomkqg"},body:JSON.stringify({simulatedDate:date})});const result=await response.json();output.textContent=(response.ok?"SIMULAÇÃO — ":"ERRO HTTP "+response.status+" — ")+JSON.stringify(result,null,2)}catch(e){output.textContent="Erro na simulação: "+e.message}}
 document.querySelector("#simulate-shift").onclick=()=>simulateShift("2026-10-11");
 document.querySelector("#simulate-off").onclick=()=>simulateShift("2026-10-10");
+
+
+document.querySelector("#diagnose-sub").onclick=async()=>{
+ try{
+  output.textContent="A verificar a subscrição desta instalação...";
+  const reg=await navigator.serviceWorker.getRegistration("./");
+  const sub=reg?await reg.pushManager.getSubscription():null;
+  const {data:{session}}=await client.auth.getSession();
+  const info={
+   standalone:matchMedia("(display-mode: standalone)").matches,
+   permission:("Notification" in window)?Notification.permission:"indisponível",
+   workerActive:!!reg?.active,
+   subscribed:!!sub,
+   endpointProvider:sub?new URL(sub.endpoint).hostname:"nenhum",
+   subscriptionFingerprint:sub?await (async()=>{const bytes=new TextEncoder().encode(sub.endpoint);const digest=await crypto.subtle.digest("SHA-256",bytes);return Array.from(new Uint8Array(digest)).slice(0,8).map(b=>b.toString(16).padStart(2,"0")).join("")})():null,
+   loggedIn:!!session,
+   note:"Diagnóstico local. Não altera subscrições nem envia notificações."
+  };
+  output.textContent="DIAGNÓSTICO — "+JSON.stringify(info,null,2);
+ }catch(e){output.textContent="Erro no diagnóstico: "+e.message}
+};
